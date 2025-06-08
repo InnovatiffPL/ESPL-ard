@@ -1,73 +1,66 @@
-# ESPL-ard
+## 1. Clone the repository
+```bash
+git clone https://github.com/InnovatiffPL/ESPL-ard.git
+cd arduino-robot
 
+## 2. Integrate IDE and install required components:
+- Visual Studio Code > PlatformIO extension from the VS Code Extension tab (Because it has native GitHub integration)
+
+Useful Libraries for PlatformIO:
+- Servo (Standard Arduino servo control)
+- NewPing (More accurate and faster than default examples)
+
+## 3. Remember to push commits only to the right branch of the repository or remove them otherwise
 arduino-robot/
 │
 ├── firmware/
-│   └── transformer_bot.ino     # Arduino sketch
+│   └── arduino-robot.ino         # Arduino sketch (C++ logic for behavior)
 │
 ├── hardware/
-│   └── wiring_diagram.png      # Optional schematic image
+│   ├── wiring_diagram.png        # Optional schematic (placeholder)
+│   └── components_list.md        # List of parts used (optional)
 │
 ├── docs/
-│   └── design.md               # Design explanations
+│   ├── design.md                 # Detailed design explanation
+│   └── expansion.md              # Optional: multi-behavior or future add-ons
 │
-├── README.md
-└── LICENSE
+├── README.md                     # Project summary + file map
+├── LICENSE                       # MIT or other open source license
+└── .gitignore                    # Ignore Arduino build artifacts
 
-# Arduino Robot Project
+### How It Works
+- The robot can lift itself, rotate on a fixed wheel, then lower back down
+- Limit switches prevent over-motion and make the system safer
+- Can be expanded to include obstacle avoidance using ultrasonic or IR sensors
 
-This project uses an Arduino Uno to control a small robot with:
-- Two DC motors for movement  
-- One servo motor to rotate the robot when lifted  
-- A linear actuator to lift the robot off the ground vertically 
-- Sensors: IR(optional), Ultrasonic, Limit Switches
+For a deeper look into the logic and wiring, [read the DESIGN.md](./DESIGN.md).
 
----
+## 1. Project Structure
 
-## 🧠 Core Behaviors
+This robot project is designed for modular movement and safety-driven actions.
 
-- Move forward and backward  
-- Detect edges(optional) and obstacles  
-- Rotate when lifted
-- Stop when needed
+## 2. Key Files
 
----
+- `main.ino` – Arduino source code for movement control (lift, rotate, retract)
+- [`DESIGN.md`](./DESIGN.md) – Full breakdown of mechanical + electronic design: including - docs/design.md
+- `README.md` – Project summary and instructions
 
-## ⚙️ Hardware Used
+## 3. Combined Behavior Logic
+1. Normal Mode: Robot drives forward using wheels
+2. If obstacle detected by ultrasonic sensor:
+    → Stop
+    → Execute lift → rotate → retract sequence
+3. Resume driving in new direction
 
-| Component          | Description                                |
-|-------------------|--------------------------------------------|
-| Arduino Uno        | Main controller                            |
-| 2x DC Motors       | For robot movement                         |
-| L298N Motor Driver | To control the DC motors                   |
-| 2x Servo Motors    | Arm rotation                               |
-| Linear Actuator    | For lifting mechanism                      |
-| IR Sensor          | Edge detection                             |
-| Ultrasonic Sensor  | Obstacle detection (front/back)           |
-| 2x Limit Switches  | Detect if lift is fully up or down         |
+## 4. Additional Components Required
+| Component         | Description                            |
+| ----------------- | -------------------------------------- |
+| Ultrasonic Sensor | e.g., HC-SR04, detects front obstacles |
+| IR Sensor         | Reflective edge detection (optional)   |
 
----
+## 5. Integration Tips
+Use flags (e.g. movementComplete) to ensure robot doesn’t resume motion too early
 
-## 🔌 Wiring Overview
+Add moveForward(), moveBackward(), or pathfinding logic after repositioning
 
-| Arduino Pin | Connected To            |
-|-------------|--------------------------|
-| D3 (ENA)    | Motor Driver ENA         |
-| D5 (ENB)    | Motor Driver ENB         |
-| D6-D9       | Motor control IN1–IN4    |
-| D10 (TRIG)  | Ultrasonic TRIG          |
-| D11 (ECHO)  | Ultrasonic ECHO          |
-| D12         | Servo 1                  |
-| D13         | Servo 2                  |
-| A0          | IR Sensor                |
-| D2          | Limit Switch UP          |
-| D4          | Limit Switch DOWN        |
-
----
-
-## 🧪 How to Use
-
-### 1. Clone the repository
-```bash
-git clone https://github.com/your-username/arduino-robot.git
-cd arduino-robot
+You can also add IR edge detection to stop movement near edges or cliffs
